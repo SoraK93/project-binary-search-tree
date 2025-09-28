@@ -2,6 +2,9 @@ import { node } from "./node.js";
 import { merge } from "../project-recursion/merge-sort.js";
 
 const tree = function (array) {
+  // Creating a initial tree
+  let root = node(array);
+
   /** Create a tree structure using the given array
    * @array {Array} - Sorted array
    * @start {Number} - Starting Index (normally first index)
@@ -19,27 +22,44 @@ const tree = function (array) {
     return currentRoot;
   };
 
-  /** This function will find the given value inside the tree, 
-   *  else will throw an error 
+  /** Insert a new value into the binary search tree 
+   *  @rootNode {}
+   *  @value {Value to be inserted}
+   */
+  const insert = function (rootNode, value) {
+    if (rootNode === null) return node(value);
+
+    if (rootNode.data === value) {
+      return;
+    } else if (rootNode.data > value) {
+      rootNode.left = insert(rootNode.left, value);
+    } else {
+      rootNode.right = insert(rootNode.right, value);
+    }
+
+    return rootNode;
+  };
+
+  /** This function will find the given value inside the tree,
+   *  else will throw an error
    *  @rootNode {node}
    *  @value {Number}
    * */
   const find = function (rootNode, value) {
     let curr = rootNode;
     if (curr.data === value) return curr;
-    while(curr != null) {
-        if (curr.data > value) {
-            curr = curr.left;
-        } else if (curr.data < value) {
-            curr = curr.right;
-        } else {
-            return curr;
-        }
+    while (curr != null) {
+      if (curr.data > value) {
+        curr = curr.left;
+      } else if (curr.data < value) {
+        curr = curr.right;
+      } else {
+        return curr;
+      }
     }
     throw Error("Data not found");
   };
 
-  // Helper Functions
   /** This will print out the entire tree */
   const prettyPrint = (node, prefix = "", isLeft = true) => {
     // console.log(node);
@@ -55,6 +75,7 @@ const tree = function (array) {
     }
   };
 
+  // Helper Functions
   /** Sort given array based on the situation
    * @clean {true} if providing initial array has no duplicates.
    * @insert {true} if a new node is inserted into the tree
@@ -70,12 +91,13 @@ const tree = function (array) {
 
   // Initial tree creation process
   let sortedArray = sortArray(array);
-  const root = buildTree(sortedArray, 0, sortedArray.length - 1);
+  root = buildTree(sortedArray, 0, sortedArray.length - 1);
 
-  return { root, find, prettyPrint };
+  return { root, insert, deleteItem, find, prettyPrint };
 };
 
 const list = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 const bst = tree(list);
+bst.insert(bst.root, 18);
+bst.insert(bst.root, 250);
 bst.prettyPrint(bst.root);
-console.log(bst.find(bst.root, 4));
