@@ -22,7 +22,7 @@ const tree = function (array) {
     return currentRoot;
   };
 
-  /** Insert a new value into the binary search tree 
+  /** Insert a new value into the binary search tree
    *  @rootNode {}
    *  @value {Value to be inserted}
    */
@@ -35,6 +35,28 @@ const tree = function (array) {
       rootNode.left = insert(rootNode.left, value);
     } else {
       rootNode.right = insert(rootNode.right, value);
+    }
+
+    return rootNode;
+  };
+
+  /** Find and delete the given value from binary search tree */
+  const deleteItem = function (rootNode, value) {
+    if (rootNode === null) return rootNode;
+
+    if (rootNode.data > value) {
+      rootNode.left = deleteItem(rootNode.left, value);
+    } else if (rootNode.data < value) {
+      rootNode.right = deleteItem(rootNode.right, value);
+    } else {
+      if (rootNode.left === null) return rootNode.right;
+
+      if (rootNode.right === null) return rootNode.left;
+
+      let leafNode = getSuccessor(rootNode);
+      rootNode.data = leafNode.data;
+      console.log(leafNode, rootNode);
+      rootNode.right = deleteItem(rootNode.right, leafNode.data);
     }
 
     return rootNode;
@@ -89,6 +111,15 @@ const tree = function (array) {
     // TODO: insertion sort implementation
   };
 
+  /** Get the leaf node for the given root node. */
+  function getSuccessor(rootNode) {
+    rootNode = rootNode.right;
+    while (rootNode !== null && rootNode.left !== null) {
+      rootNode = rootNode.left;
+    }
+    return rootNode;
+  }
+
   // Initial tree creation process
   let sortedArray = sortArray(array);
   root = buildTree(sortedArray, 0, sortedArray.length - 1);
@@ -99,5 +130,10 @@ const tree = function (array) {
 const list = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 const bst = tree(list);
 bst.insert(bst.root, 18);
+bst.insert(bst.root, 6);
 bst.insert(bst.root, 250);
+bst.prettyPrint(bst.root);
+bst.deleteItem(bst.root, 250);
+bst.prettyPrint(bst.root);
+bst.deleteItem(bst.root, 67);
 bst.prettyPrint(bst.root);
